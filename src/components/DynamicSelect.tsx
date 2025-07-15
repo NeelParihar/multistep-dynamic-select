@@ -24,7 +24,7 @@ export function DynamicSelect({
   const [currentItems, setCurrentItems] = useState<ResourceItem[]>([]);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Initialize with top-level categories
+  // Initialize with top-level categories and update when categories change
   useEffect(() => {
     if (currentPath.length === 0) {
       const topLevelItems: ResourceItem[] = [];
@@ -34,8 +34,36 @@ export function DynamicSelect({
         });
       });
       setCurrentItems(topLevelItems);
+    } else {
+      // If we're at a deeper level, find the current items based on the path
+      const newPath = currentPath;
+      let items: ResourceItem[] = [];
+
+      const lastItem = newPath[newPath.length - 1];
+      // Find the item in the hierarchy
+      const findItem = (searchItems: ResourceItem[]): ResourceItem | null => {
+        for (const item of searchItems) {
+          if (item.id === lastItem.id) {
+            return item;
+          }
+          if (item.children) {
+            const found = findItem(item.children);
+            if (found) return found;
+          }
+        }
+        return null;
+      };
+
+      categories.forEach((category) => {
+        const found = findItem(category.items);
+        if (found && found.children) {
+          items = found.children;
+        }
+      });
+
+      setCurrentItems(items);
     }
-  }, [categories, currentPath.length]);
+  }, [categories, currentPath]);
 
   // Filter items based on search term
   useEffect(() => {
