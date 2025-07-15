@@ -34,7 +34,6 @@ The component displays a searchable dropdown with hierarchical navigation:
       - Name
       - Email
       - Phone
-- **Global Variables**
   - **API**
     - API Configuration
     - API Endpoints
