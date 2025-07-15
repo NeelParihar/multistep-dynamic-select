@@ -181,6 +181,14 @@ export function DynamicSelect({
     setSearchTerm(value);
     setIsOpen(true);
 
+    // If input is empty, clear all state
+    if (!value.trim()) {
+      setCurrentPath([]);
+      setSelectedItem(null);
+      setSearchTerm("");
+      return;
+    }
+
     // If user is editing a path, clear the current path
     if (value && !value.startsWith("{!")) {
       setCurrentPath([]);
@@ -212,6 +220,7 @@ export function DynamicSelect({
           onChange={handleInputChange}
           onClick={handleInputClick}
           className="search-input"
+          key={`input-${currentPath.length}-${searchTerm.length}`}
         />
         <span className="search-icon">
           <SearchIcon size={16} />
